@@ -4,10 +4,10 @@ const galleryEl = document.querySelector('.gallery');
 galleryEl.addEventListener('click', hendleClick);
 
 const galleryImages = galleryItems.map(({original,preview,description}) => {
-    return `<li class=${'gallery__item'}>
-  <a class=${'gallery__link'} href=${original}>
+    return `<li class='gallery__item'>
+  <a class='gallery__link' href=${original}>
     <img
-      class=${"gallery__image"}
+      class="gallery__image"
       src=${preview}
       data-source=${original}
       alt=${description}
@@ -27,32 +27,34 @@ function hendleClick(event) {
  }
   
   const target = event.target.dataset.source;
-  const findTargetImg = galleryItems.find(product => {
-    return (product.original === target);
-  });
- 
-  openCloseModal(findTargetImg,target);
+  const description = event.target.attributes.alt.value;
+  console.log(description);
+  openCloseModal(description,target);
 
 };
 
-function openCloseModal(findTargetImg,target) {
+function openCloseModal(description,target) {
   
   const instance = basicLightbox.create(`
-  <div class = "modal">
+  <div class="modal">
     <img
-      src = ${target}
-      alt=${findTargetImg.description}
+      src=${target}
+      alt=${description}
       width="800" height="500"
     />
   </div>
-  `);
+  `, {
+    onShow: (instance)=>{galleryEl.addEventListener("keydown", escModal)},
+    onclose: (instance)=>{galleryEl.removeEventListener("keydown", escModal)}
+  });
   instance.show();
 
-    galleryEl.addEventListener("keydown", (evt) => {
-    if (evt.code === 'Escape') {
+  function escModal(evt) {
+     if (evt.code === 'Escape') {
       instance.close();
     }
-  })
+  };
+
 };
 
 
